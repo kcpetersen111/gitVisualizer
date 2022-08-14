@@ -96,7 +96,7 @@ func parseFileLinesToSlice(filePath string) []string {
 
 // opens the file located at filepath and will create it if it does not exist
 func openFile(filePath string) *os.File {
-	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_WRONLY, 0755)
+	f, err := os.OpenFile(filePath, os.O_APPEND|os.O_RDWR, 0755)
 	if err != nil {
 		if os.IsNotExist(err) {
 			//if the file does not exist

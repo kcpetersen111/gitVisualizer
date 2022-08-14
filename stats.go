@@ -5,8 +5,8 @@ import (
 	"sort"
 	"time"
 
-	"github.com/go-git/go-git/plumbing/object"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
 )
 
 const (
@@ -54,8 +54,8 @@ func fillCommits(email, path string, commits map[int]int) map[int]int {
 	}
 	//iterate the commits
 	offset := calcOffset()
-	var c object.Commit
-	err = iterator.ForEach(func(c *object.Commit) error {
+
+	function := func(c *object.Commit) error {
 		daysAgo := countDaysSinceDate(c.Author.When) + offset
 		if c.Author.Email != email {
 			return nil
@@ -64,7 +64,8 @@ func fillCommits(email, path string, commits map[int]int) map[int]int {
 			commits[daysAgo]++
 		}
 		return nil
-	})
+	}
+	err = iterator.ForEach(function)
 	if err != nil {
 		panic(err)
 	}
@@ -178,13 +179,13 @@ func printCells(cols map[int]column) {
 func printMonths() {
 	week := getBeginningOfDay(time.Now()).Add(-(daysInLastSixMonths * time.Hour * 24))
 	month := week.Month()
-	fmt.Printf("		")
+	fmt.Printf("	")
 	for {
 		if week.Month() != month {
 			fmt.Printf("%s ", week.Month().String()[:3])
 			month = week.Month()
 		} else {
-			fmt.Printf("		")
+			fmt.Printf("	")
 		}
 
 		week = week.Add(7 * time.Hour * 24)
@@ -205,7 +206,7 @@ func printDayCol(day int) {
 	case 5:
 		out = " Fri "
 	}
-	fmt.Printf(out)
+	fmt.Printf("%v", out)
 }
 
 func printCell(val int, today bool) {
